@@ -6,7 +6,8 @@ namespace Notebook.DataService.Data;
 
 public class ApplicationDbContext : IdentityDbContext
 {
-    private DbSet<User> Users;
+    public virtual DbSet<User> Users { get; set; }
+
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
     {
         
