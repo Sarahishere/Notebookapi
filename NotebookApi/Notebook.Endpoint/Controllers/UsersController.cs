@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Notebook.DataService.Data;
+using Notebook.DataService.IConfiguration;
 using Notebook.Entities.DbSet;
 using Notebook.Entities.Dtos.IncomingDto;
 
@@ -9,40 +10,40 @@ namespace Notebook.Endpoint.Controllers;
 [Route("api/[controller]")]
 public class UsersController : ControllerBase
 {
-    private readonly ApplicationDbContext _dbContext;
+    private readonly IUnitOfWork _unitOfWork;
 
-    public UsersController(ApplicationDbContext dbContext)
+    public UsersController(IUnitOfWork unitOfWork)
     {
-        _dbContext = dbContext;
+        _unitOfWork = unitOfWork;
     }
     //Post 
     [HttpPost]
-    public IActionResult CreateUser(UserDto user)
+    public async Task<IActionResult> CreateUser(UserDto user)
     {
         var newUser = new User();
         newUser.Country = user.Country;
         newUser.Email = user.Email;
-        newUser.FirstName = user.Email;
+        newUser.FirstName = user.FirstName;
         newUser.LastName = user.LastName;
-        newUser.PhoneNum = user.LastName;
+        newUser.PhoneNum = user.PhoneNum;
         newUser.DateOfBirth = DateTime.Parse(user.DateOfBirth);
-        _dbContext.Users.Add(newUser);
-        _dbContext.SaveChanges();
-        return Ok();//todo: return 201
+        await _unitOfWork.Users.Create(newUser);
+        await _unitOfWork.CompleteAsync();
+        return CreatedAtAction("GetUserById",newUser.Id,newUser);
     }
     // Get all users
     [HttpGet]
-    public IActionResult GetUsers()
+    public async Task<IActionResult> GetUsers()
     {
-        var users = _dbContext.Users.Where(x => x.Status == 1).ToList();
+        var users = await _unitOfWork.Users.GetAll();
         return Ok(users);
     }
     // Get user by id
     [HttpGet]
     [Route("getById")]
-    public IActionResult GetUserById(Guid id)
+    public async Task<IActionResult> GetUserById(Guid id)
     {
-        var user = _dbContext.Users.FirstOrDefault(x => x.Id == id);
+        var user = await _unitOfWork.Users.GetById(id);
         if (user == null)
             return NotFound();
         return Ok(user);

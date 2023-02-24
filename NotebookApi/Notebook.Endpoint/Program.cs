@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Notebook.DataService.Data;
+using Notebook.DataService.IConfiguration;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -12,6 +13,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
+builder.Services.AddScoped<IUnitOfWork,UnitOfWork>();
 
 var app = builder.Build();
 
