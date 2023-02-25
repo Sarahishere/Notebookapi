@@ -9,13 +9,10 @@ namespace Notebook.Endpoint.Controllers.V1;
 [ApiController]
 [ApiVersion("1.0")]
 [Route("api/V{version:apiVersion}/[controller]")]
-public class UsersController : ControllerBase
+public class UsersController : BaseController
 {
-    private readonly IUnitOfWork _unitOfWork;
-
-    public UsersController(IUnitOfWork unitOfWork)
+    public UsersController(IUnitOfWork unitOfWork) : base(unitOfWork)
     {
-        _unitOfWork = unitOfWork;
     }
     //Post 
     [HttpPost]
@@ -49,4 +46,6 @@ public class UsersController : ControllerBase
             return NotFound();
         return Ok(user);
     }
+
+   
 }
