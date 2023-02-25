@@ -4,10 +4,11 @@ using Notebook.DataService.IConfiguration;
 using Notebook.Entities.DbSet;
 using Notebook.Entities.Dtos.IncomingDto;
 
-namespace Notebook.Endpoint.Controllers;
+namespace Notebook.Endpoint.Controllers.V1;
 
 [ApiController]
-[Route("api/[controller]")]
+[ApiVersion("1.0")]
+[Route("api/V{version:apiVersion}/[controller]")]
 public class UsersController : ControllerBase
 {
     private readonly IUnitOfWork _unitOfWork;

@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Notebook.DataService.Data;
 using Notebook.DataService.IConfiguration;
@@ -14,6 +15,12 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
 builder.Services.AddScoped<IUnitOfWork,UnitOfWork>();
+builder.Services.AddApiVersioning(opt =>
+{
+    opt.ReportApiVersions = true; //report api version to client
+    opt.AssumeDefaultVersionWhenUnspecified = true; // user default api version
+    opt.DefaultApiVersion = ApiVersion.Default;
+});
 
 var app = builder.Build();
 
