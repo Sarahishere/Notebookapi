@@ -17,6 +17,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\Notebook.Auth\Notebook.Auth.csproj" />
       <ProjectReference Include="..\Notebook.DataService\Notebook.DataService.csproj" />
     </ItemGroup>
 

@@ -5,7 +5,7 @@ namespace Notebook.Endpoint.Controllers.V1;
 
 [ApiController]
 [ApiVersion("1.0")]
-[Route("api/{version:apiVersion}/Users")]
+[Route("api/v{version:apiVersion}/[controller]")]
 public class BaseController : ControllerBase
 {
     protected IUnitOfWork _unitOfWork;

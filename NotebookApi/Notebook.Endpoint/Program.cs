@@ -1,7 +1,12 @@
+using System.Text;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using Notebook.DataService.Data;
 using Notebook.DataService.IConfiguration;
+using Notebook.Endpoint.Configuration.Models;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -21,6 +26,30 @@ builder.Services.AddApiVersioning(opt =>
     opt.AssumeDefaultVersionWhenUnspecified = true; // user default api version
     opt.DefaultApiVersion = ApiVersion.Default;
 });
+builder.Services.AddAuthentication(options =>
+    {
+        options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+        options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+        options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+    })
+    .AddJwtBearer(jwt =>
+    {
+        var key = Encoding.ASCII.GetBytes(builder.Configuration.GetSection("JWTConfig").GetSection("Secret").Value);
+        jwt.SaveToken = true;
+        jwt.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuerSigningKey = true,
+            IssuerSigningKey = new SymmetricSecurityKey(key),
+            ValidateLifetime = true,
+            ValidateAudience = false, //TODO: update in prod
+            ValidateIssuer = false, //TODO: update in prod
+            RequireExpirationTime = false // TODO: need update
+        };
+    });
+builder.Services.Configure<JWTConfig>(builder.Configuration.GetSection("JWTConfig"));
+builder.Services.AddDefaultIdentity<IdentityUser>(options =>
+        options.SignIn.RequireConfirmedAccount = true)
+    .AddEntityFrameworkStores<ApplicationDbContext>();
 
 var app = builder.Build();
 
@@ -32,6 +61,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseAuthentication();
 
 app.UseAuthorization();
 

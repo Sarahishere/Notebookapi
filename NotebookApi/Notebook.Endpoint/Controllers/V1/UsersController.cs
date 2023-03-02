@@ -1,3 +1,6 @@
+using System.IdentityModel.Tokens.Jwt;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Notebook.DataService.Data;
 using Notebook.DataService.IConfiguration;
@@ -6,9 +9,7 @@ using Notebook.Entities.Dtos.IncomingDto;
 
 namespace Notebook.Endpoint.Controllers.V1;
 
-[ApiController]
-[ApiVersion("1.0")]
-[Route("api/V{version:apiVersion}/[controller]")]
+[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
 public class UsersController : BaseController
 {
     public UsersController(IUnitOfWork unitOfWork) : base(unitOfWork)
